@@ -34,7 +34,6 @@ const CLUSTER_PADDING_TOP = 44;
 const CLUSTER_PADDING_BOTTOM = 20;
 const CLUSTER_GAP_X = 28;
 const CLUSTER_GAP_Y = 34;
-const CLUSTER_COLUMNS = 3;
 const PADDING_X = 28;
 const PADDING_Y = 28;
 
@@ -46,19 +45,21 @@ export function RelationshipMap({
   description,
 }: RelationshipMapProps) {
   const groupedDepartments = groupDepartmentsByCategory(departments);
+  const clusterColumns =
+    groupedDepartments.length >= 10 ? 4 : groupedDepartments.length >= 6 ? 3 : 2;
   const points = new Map<string, Point>();
   const clusterFrames = new Map<string, ClusterFrame>();
   const width =
     PADDING_X * 2 +
-    CLUSTER_COLUMNS * CLUSTER_WIDTH +
-    (CLUSTER_COLUMNS - 1) * CLUSTER_GAP_X;
+    clusterColumns * CLUSTER_WIDTH +
+    (clusterColumns - 1) * CLUSTER_GAP_X;
   const rowHeights = Array.from(
-    { length: Math.max(Math.ceil(groupedDepartments.length / CLUSTER_COLUMNS), 1) },
+    { length: Math.max(Math.ceil(groupedDepartments.length / clusterColumns), 1) },
     () => 0,
   );
 
   groupedDepartments.forEach((group, index) => {
-    const clusterRow = Math.floor(index / CLUSTER_COLUMNS);
+    const clusterRow = Math.floor(index / clusterColumns);
     const departmentRows = Math.ceil(group.departments.length / 2);
     const clusterHeight =
       CLUSTER_PADDING_TOP +
@@ -70,8 +71,8 @@ export function RelationshipMap({
   });
 
   groupedDepartments.forEach((group, index) => {
-    const clusterColumn = index % CLUSTER_COLUMNS;
-    const clusterRow = Math.floor(index / CLUSTER_COLUMNS);
+    const clusterColumn = index % clusterColumns;
+    const clusterRow = Math.floor(index / clusterColumns);
     const departmentRows = Math.ceil(group.departments.length / 2);
     const clusterHeight =
       CLUSTER_PADDING_TOP +

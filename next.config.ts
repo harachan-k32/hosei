@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const isVercel = process.env.VERCEL === "1";
 
 const nextConfig: NextConfig = {
-  ...(isVercel ? {} : { distDir: "release-build-20260410" }),
+  ...(isVercel ? {} : { distDir: ".next-local-build" }),
   turbopack: {
     root: process.cwd(),
   },

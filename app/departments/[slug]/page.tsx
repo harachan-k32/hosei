@@ -181,20 +181,26 @@ export default async function DepartmentPage({ params }: DepartmentPageProps) {
             <h2 className="font-[family:var(--font-heading)] text-2xl font-bold text-slate-950">
               関連する窓口
             </h2>
-            <div className="mt-5 grid gap-3">
-              {relatedDepartments.map((relatedDepartment) => (
-                <Link
-                  key={relatedDepartment.id}
-                  href={`/departments/${relatedDepartment.slug}`}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:-translate-y-0.5 hover:border-slate-950"
-                >
-                  <p className="font-semibold text-slate-950">{relatedDepartment.name}</p>
-                  <p className="mt-1 text-sm leading-6 text-slate-600">
-                    {relatedDepartment.shortDescription}
-                  </p>
-                </Link>
-              ))}
-            </div>
+            {relatedDepartments.length === 0 ? (
+              <p className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-sm leading-6 text-slate-600">
+                この窓口の関連先はまだ整理中です。まずは公式リンクと所属カテゴリを起点に確認してください。
+              </p>
+            ) : (
+              <div className="mt-5 grid gap-3">
+                {relatedDepartments.map((relatedDepartment) => (
+                  <Link
+                    key={relatedDepartment.id}
+                    href={`/departments/${relatedDepartment.slug}`}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:-translate-y-0.5 hover:border-slate-950"
+                  >
+                    <p className="font-semibold text-slate-950">{relatedDepartment.name}</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      {relatedDepartment.shortDescription}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            )}
           </section>
         </aside>
       </section>
@@ -223,14 +229,20 @@ export default async function DepartmentPage({ params }: DepartmentPageProps) {
           </div>
           <div className="rounded-2xl bg-slate-50 p-5">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Relation Notes</p>
-            <ul className="mt-4 grid gap-3 text-sm text-slate-700">
-              {relatedRelations.map((relation) => (
-                <li key={relation.id} className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                  <p className="font-semibold text-slate-950">{relation.label}</p>
-                  <p className="mt-1 text-slate-600">{relation.note}</p>
-                </li>
-              ))}
-            </ul>
+            {relatedRelations.length === 0 ? (
+              <p className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-600">
+                この窓口は一覧先行で追加しているため、関係線メモはこれから補強します。
+              </p>
+            ) : (
+              <ul className="mt-4 grid gap-3 text-sm text-slate-700">
+                {relatedRelations.map((relation) => (
+                  <li key={relation.id} className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                    <p className="font-semibold text-slate-950">{relation.label}</p>
+                    <p className="mt-1 text-slate-600">{relation.note}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </section>

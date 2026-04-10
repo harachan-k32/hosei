@@ -31,6 +31,8 @@ export function DirectoryShell({
   const [selectedCampus, setSelectedCampus] = useState("all");
   const [selectedCourse, setSelectedCourse] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const campusOptions = Array.from(new Set(departments.flatMap((department) => department.campusTypes)));
+  const courseOptions = Array.from(new Set(departments.flatMap((department) => department.courseTypes)));
 
   const normalizedSearch = search.trim().toLowerCase();
   const filteredDepartments = departments.filter((department) => {
@@ -97,10 +99,7 @@ export function DirectoryShell({
               onChange={setSelectedCampus}
               options={[
                 { label: "すべて", value: "all" },
-                { label: "市ケ谷", value: "市ケ谷" },
-                { label: "多摩", value: "多摩" },
-                { label: "小金井", value: "小金井" },
-                { label: "共通", value: "共通" },
+                ...campusOptions.map((campus) => ({ label: campus, value: campus })),
               ]}
             />
             <FilterSelect
@@ -109,9 +108,7 @@ export function DirectoryShell({
               onChange={setSelectedCourse}
               options={[
                 { label: "すべて", value: "all" },
-                { label: "通学課程", value: "通学課程" },
-                { label: "通信教育部", value: "通信教育部" },
-                { label: "共通", value: "共通" },
+                ...courseOptions.map((course) => ({ label: course, value: course })),
               ]}
             />
             <FilterSelect

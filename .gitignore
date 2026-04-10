@@ -16,6 +16,7 @@
 # next.js
 /.next/
 /release-build-20260410/
+/.next-local-build/
 /.next-build/
 /.next-release/
 /app/api/og/route.tsx
@@ -39,6 +40,8 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+/lib/data.copy.ts
 /.vercel-global/
 
 # typescript
