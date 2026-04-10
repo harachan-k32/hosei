@@ -15,6 +15,10 @@
 
 # next.js
 /.next/
+/release-build-20260410/
+/.next-build/
+/.next-release/
+/app/api/og/route.tsx
 /out/
 
 # production
@@ -35,6 +39,7 @@ yarn-error.log*
 
 # vercel
 .vercel
+/.vercel-global/
 
 # typescript
 *.tsbuildinfo
