@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { getRelationColor, groupDepartmentsByCategory } from "@/lib/graph";
 import type { Department, DepartmentRelation } from "@/lib/types";
 
@@ -10,6 +11,7 @@ type RelationshipMapProps = {
   selectedSlug?: string;
   title: string;
   description: string;
+  controls?: ReactNode;
 };
 
 type Point = {
@@ -43,6 +45,7 @@ export function RelationshipMap({
   selectedSlug,
   title,
   description,
+  controls,
 }: RelationshipMapProps) {
   const groupedDepartments = groupDepartmentsByCategory(departments);
   const clusterColumns =
@@ -119,6 +122,7 @@ export function RelationshipMap({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm uppercase tracking-[0.18em] text-slate-500">Map view</p>
+          {controls ? <div className="mt-3">{controls}</div> : null}
           <h2 className="mt-1 font-[family:var(--font-heading)] text-3xl font-bold text-slate-950">
             {title}
           </h2>

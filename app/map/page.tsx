@@ -1,5 +1,5 @@
-import { RelationshipMap } from "@/components/map/relationship-map";
-import { departments, relations } from "@/lib/data";
+import { MapPageShell } from "@/components/map/map-page-shell";
+import { categories, departments, relations } from "@/lib/data";
 
 export const metadata = {
   title: "関係マップ",
@@ -21,12 +21,10 @@ export default function MapPage() {
         </p>
       </section>
 
-      <RelationshipMap
+      <MapPageShell
+        categories={categories}
         departments={departments}
         relations={relations}
-        selectedSlug={departments[0]?.slug}
-        title="全体マップ"
-        description="スクロールしながら全カテゴリを横断できます。カードからそのまま詳細ページへ移動できます。"
       />
     </main>
   );
