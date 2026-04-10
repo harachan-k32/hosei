@@ -26,14 +26,13 @@ type ClusterFrame = {
   height: number;
 };
 
-const NODE_WIDTH = 224;
-const NODE_HEIGHT = 128;
-const NODE_GAP_X = 24;
-const NODE_GAP_Y = 22;
-const CLUSTER_WIDTH = 332;
+const NODE_WIDTH = 256;
+const NODE_HEIGHT = 156;
+const NODE_GAP_Y = 18;
+const CLUSTER_WIDTH = 292;
 const CLUSTER_PADDING_X = 18;
-const CLUSTER_PADDING_TOP = 44;
-const CLUSTER_PADDING_BOTTOM = 20;
+const CLUSTER_PADDING_TOP = 56;
+const CLUSTER_PADDING_BOTTOM = 18;
 const CLUSTER_GAP_X = 28;
 const CLUSTER_GAP_Y = 34;
 const PADDING_X = 28;
@@ -47,7 +46,21 @@ export function RelationshipMap({
   description,
   controls,
 }: RelationshipMapProps) {
-  const groupedDepartments = groupDepartmentsByCategory(departments);
+  const groupedDepartments = groupDepartmentsByCategory(departments).map((group) => ({
+    ...group,
+    departments: [...group.departments].sort((left, right) => {
+      const campusOrder = left.campusTypes.join(" / ").localeCompare(
+        right.campusTypes.join(" / "),
+        "ja",
+      );
+
+      if (campusOrder !== 0) {
+        return campusOrder;
+      }
+
+      return left.name.localeCompare(right.name, "ja");
+    }),
+  }));
   const clusterColumns =
     groupedDepartments.length >= 10 ? 4 : groupedDepartments.length >= 6 ? 3 : 2;
   const points = new Map<string, Point>();
@@ -63,7 +76,7 @@ export function RelationshipMap({
 
   groupedDepartments.forEach((group, index) => {
     const clusterRow = Math.floor(index / clusterColumns);
-    const departmentRows = Math.ceil(group.departments.length / 2);
+    const departmentRows = group.departments.length;
     const clusterHeight =
       CLUSTER_PADDING_TOP +
       CLUSTER_PADDING_BOTTOM +
@@ -76,7 +89,7 @@ export function RelationshipMap({
   groupedDepartments.forEach((group, index) => {
     const clusterColumn = index % clusterColumns;
     const clusterRow = Math.floor(index / clusterColumns);
-    const departmentRows = Math.ceil(group.departments.length / 2);
+    const departmentRows = group.departments.length;
     const clusterHeight =
       CLUSTER_PADDING_TOP +
       CLUSTER_PADDING_BOTTOM +
@@ -108,11 +121,9 @@ export function RelationshipMap({
     }
 
     group.departments.forEach((department, index) => {
-      const columnIndex = index % 2;
-      const rowIndex = Math.floor(index / 2);
       points.set(department.id, {
-        x: cluster.x + CLUSTER_PADDING_X + columnIndex * (NODE_WIDTH + NODE_GAP_X),
-        y: cluster.y + CLUSTER_PADDING_TOP + rowIndex * (NODE_HEIGHT + NODE_GAP_Y),
+        x: cluster.x + CLUSTER_PADDING_X,
+        y: cluster.y + CLUSTER_PADDING_TOP + index * (NODE_HEIGHT + NODE_GAP_Y),
       });
     });
   });
@@ -184,7 +195,7 @@ export function RelationshipMap({
                   stroke={getRelationColor(relation.relationType)}
                   strokeDasharray={relation.relationType === "misroute" ? "10 10" : undefined}
                   strokeWidth={relation.weight === 3 ? 4 : 3}
-                  strokeOpacity={0.72}
+                  strokeOpacity={0.42}
                 />
               );
             })}
@@ -208,8 +219,11 @@ export function RelationshipMap({
                   width: cluster.width,
                 }}
               >
-                <div className="px-5 pt-4 text-sm font-semibold tracking-[0.08em] text-slate-600">
-                  {group.categoryName}
+                <div className="flex items-center justify-between px-5 pt-4 text-sm text-slate-600">
+                  <span className="font-semibold tracking-[0.08em]">{group.categoryName}</span>
+                  <span className="rounded-full bg-white/80 px-2.5 py-1 text-xs font-medium text-slate-500">
+                    {group.departments.length}件
+                  </span>
                 </div>
               </div>
             );
@@ -240,13 +254,26 @@ export function RelationshipMap({
                   width: NODE_WIDTH,
                 }}
               >
-                <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                    {department.campusTypes.join(" / ")}
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    {department.campusTypes.map((campus) => (
+                      <span
+                        key={`${department.id}-${campus}`}
+                        className={`rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-[0.12em] ${getCampusBadgeClass(
+                          campus,
+                        )}`}
+                      >
+                        {campus}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-base font-semibold leading-6 text-slate-950">
+                    {department.name}
                   </p>
-                  <p className="mt-2 text-base font-semibold text-slate-950">{department.name}</p>
                 </div>
-                <p className="text-sm leading-6 text-slate-600">{department.shortDescription}</p>
+                <p className="line-clamp-3 text-sm leading-6 text-slate-600">
+                  {department.shortDescription}
+                </p>
               </Link>
             );
           })}
@@ -263,4 +290,21 @@ function LegendChip({ color, label }: { color: string; label: string }) {
       {label}
     </span>
   );
+}
+
+function getCampusBadgeClass(campus: string) {
+  switch (campus) {
+    case "市ケ谷":
+      return "bg-sky-100 text-sky-700";
+    case "多摩":
+      return "bg-emerald-100 text-emerald-700";
+    case "小金井":
+      return "bg-amber-100 text-amber-700";
+    case "共通":
+      return "bg-slate-200 text-slate-700";
+    case "付属校":
+      return "bg-rose-100 text-rose-700";
+    default:
+      return "bg-slate-100 text-slate-700";
+  }
 }
